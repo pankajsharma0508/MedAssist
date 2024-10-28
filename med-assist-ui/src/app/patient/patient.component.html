@@ -1,0 +1,40 @@
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Patient Information</h2>
+
+    <!-- Bind the form group to the template with [formGroup] -->
+    <form [formGroup]="patientForm">
+        <div class="form-group p-1">
+            <label for="patientName">Patient Name</label>
+            <input type="text" class="form-control" id="patientName" placeholder="Enter patient name"
+                formControlName="name" required>
+            <div *ngIf="patientForm.get('name')?.invalid && patientForm.get('name')?.touched" class="text-danger">
+                Name is required.
+            </div>
+        </div>
+        <div class="form-group p-1 pb-2">
+            <label for="diagnosis">Diagnosis</label>
+            <div class="d-flex">
+
+                <textarea class="form-control" id="diagnosis" placeholder="Enter diagnosis" formControlName="diagnosis"
+                    rows="4" required>
+                    <div *ngIf="patientForm.get('diagnosis')?.invalid && patientForm.get('diagnosis')?.touched"
+                    class="text-danger">
+                    Diagnosis is required.
+                </div>
+            </textarea>
+                <div class="p-2">
+                    <ngx-mic-recorder (getAsBlob)="saveAsBlob($event)" (afterStopRecording)="afterStop($event)"
+                        [showVisualization]="true" visualizationType="SineWave"></ngx-mic-recorder>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="patientForm.invalid">Submit</button>
+    </form>
+
+    <!-- Display the form data (for demonstration purposes) -->
+    <div class="mt-4" *ngIf="patientForm.valid">
+        <h5>Submitted Data:</h5>
+        <p><strong>Patient Name:</strong> {{ patientForm.value.name }}</p>
+        <p><strong>Diagnosis:</strong> {{ patientForm.value.diagnosis }}</p>
+    </div>
+</div>

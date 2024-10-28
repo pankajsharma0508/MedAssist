@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <h1> <i class="bi bi-heart-pulse"></i> MedAssist </h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" routerLink="home" aria-current="page">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" routerLink="patient" aria-current="page" href="#">Patient</a>
+        </li>
+      </ul>
+    </div>
+    <h6 style="color: white; padding-right: 20px;"> By Group 19</h6>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="m-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<ng-template #demoModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Profile update</h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+      (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="dateOfBirth">Date of birth</label>
+        <div class="input-group">
+          <!-- <input id="dateOfBirth" name="dateOfBirth" class="form-control" placeholder="yyyy-mm-dd" ngbDatepicker #dp="ngbDatepicker"> -->
+          <!-- <button type="button" class="btn btn-outline-secondary bi bi-calendar" (click)="dp.toggle()"></button> -->
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>

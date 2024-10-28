@@ -1,6 +1,9 @@
-from fastapi import FastAPI
+from typing import Annotated
+from fastapi import FastAPI, File, UploadFile
+from tasks.SpeechToTextConverter import SpeechToTextConverter
 
 app = FastAPI()
+speechToTextConverter = SpeechToTextConverter()
 
 
 @app.get("/")
@@ -9,5 +12,5 @@ async def index():
 
 
 @app.get("/speech-to-text")
-async def ConvertSpeechToText():
-    return "<h1> speech-to-text</h1>"
+async def ConvertSpeechToText(file: Annotated[UploadFile, File(...)]):
+    return speechToTextConverter.convert()
