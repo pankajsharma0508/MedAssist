@@ -1,40 +1,74 @@
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Patient Information</h2>
+    <h2 class="text-center mb-4">Patient Information - {{ patient.name}}</h2>
 
-    <!-- Bind the form group to the template with [formGroup] -->
-    <form [formGroup]="patientForm">
-        <div class="form-group p-1">
-            <label for="patientName">Patient Name</label>
-            <input type="text" class="form-control" id="patientName" placeholder="Enter patient name"
-                formControlName="name" required>
-            <div *ngIf="patientForm.get('name')?.invalid && patientForm.get('name')?.touched" class="text-danger">
-                Name is required.
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Template-driven form with ngModel -->
+            <form #patientForm="ngForm">
+                <div class="form-group p-1">
+                    <label for="patientName">Patient Name</label>
+                    <input type="text" class="form-control" id="patientName" placeholder="Enter patient name"
+                        name="name" [(ngModel)]="patient.name" required>
+                </div>
+                <div class="form-group p-1 pb-2">
+                    <label for="Symptoms">Describe the symptoms in detail</label>
+                    <div class="d-flex">
+                        <textarea class="form-control" id="Symptoms" placeholder="Enter symptoms" name="Symptoms"
+                            [(ngModel)]="patient.symptoms" rows="2" required></textarea>
+                    </div>
+                </div>
+               
+                <div class="form-group p-1 pb-2">
+                    <label for="diagnosis">Diagnosis</label>
+                    <div class="d-flex">
+                        <textarea class="form-control" id="diagnosis" placeholder="Enter diagnosis" name="diagnosis"
+                            [(ngModel)]="patient.diagnosis" rows="1" required></textarea>
+                        <div class="p-2">
+                            <ngx-mic-recorder (getAsBlob)="saveAsBlob($event)" (afterStopRecording)="afterStop($event)"
+                                [showVisualization]="true" visualizationType="FrequencyCircles"></ngx-mic-recorder>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group p-1 pb-2">
+                    <label for="Symptoms">Please provide medical reports.  </label>
+                    <div class="d-flex">
+                        <textarea class="form-control" id="Symptoms" placeholder="Enter report urls separated by semicolon." name="Symptoms"
+                            [(ngModel)]="files" rows="2" required></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <button class="btn btn-sm btn-primary" (click)="getSeverity()"> Predict Severity</button>
+            <button class="btn btn-sm btn-primary m-1" (click)="summarize()"> Summaries</button>
+            <button class="btn btn-sm btn-primary m-1" (click)="categoriesReports()"> Categories Reports</button>
+            <!-- Display the form data (for demonstration purposes) -->
+            <div class="mt-4 p-2 border border-primary" >
+                <h5>Patient Health Summary:</h5>
+                <p><strong>Patient Name:</strong> {{ patient.name }}</p>
+                <p><strong>Diagnosis:</strong> <br>{{ patient.diagnosis }}</p>
+                <p><strong>Severity:</strong> {{ patient.severity }}</p>
+                <p><strong>Summary:</strong> {{ patient.summary }}</p>
+                <div class="container mt-4">
+                    <h5>Reports</h5>
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th scope="col">Report name</th>
+                          <th scope="col">Report Category</th>
+                          <th scope="col">Probability</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of patient.reports; let i = index">
+                          <td>{{ item.name }}</td>
+                          <td>{{ item.category }}</td>
+                          <td><a [href]="item.url" target="_blank">Report Link</a></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
             </div>
         </div>
-        <div class="form-group p-1 pb-2">
-            <label for="diagnosis">Diagnosis</label>
-            <div class="d-flex">
-
-                <textarea class="form-control" id="diagnosis" placeholder="Enter diagnosis" formControlName="diagnosis"
-                    rows="4" required>
-                    <div *ngIf="patientForm.get('diagnosis')?.invalid && patientForm.get('diagnosis')?.touched"
-                    class="text-danger">
-                    Diagnosis is required.
-                </div>
-            </textarea>
-                <div class="p-2">
-                    <ngx-mic-recorder (getAsBlob)="saveAsBlob($event)" (afterStopRecording)="afterStop($event)"
-                        [showVisualization]="true" visualizationType="SineWave"></ngx-mic-recorder>
-                </div>
-            </div>
-        </div>
-        <button type="submit" class="btn btn-primary" [disabled]="patientForm.invalid">Submit</button>
-    </form>
-
-    <!-- Display the form data (for demonstration purposes) -->
-    <div class="mt-4" *ngIf="patientForm.valid">
-        <h5>Submitted Data:</h5>
-        <p><strong>Patient Name:</strong> {{ patientForm.value.name }}</p>
-        <p><strong>Diagnosis:</strong> {{ patientForm.value.diagnosis }}</p>
     </div>
 </div>
