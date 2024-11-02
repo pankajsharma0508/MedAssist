@@ -3,7 +3,7 @@ import requests
 from transformers import CLIPProcessor, CLIPModel
 
 model_name = "openai/clip-vit-base-patch32"
-labels = ["Chest X-Ray", "CT-Scan", "Lab Report", "plane"]
+labels = ["Chest X-Ray", "CT-Scan", "Lab Report"]
 
 
 class ImageClassifier:
@@ -24,4 +24,4 @@ class ImageClassifier:
         probs = logits_per_image.softmax(dim=1)
 
         top_label, top_prob = max(zip(labels, probs[0]), key=lambda x: x[1])
-        return f"{top_label} ({top_prob.item():.2f}%)"
+        return f"{top_label} ({top_prob.item() * 100:.2f}%)"
