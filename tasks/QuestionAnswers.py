@@ -1,13 +1,26 @@
-from transformers import pipeline
+import openai
+import os
 
-qa_pipeline = pipeline(
-    "question-answering",
-    model="./dynamic_tinybert_symptoms_to_disease",
-    tokenizer="Intel/dynamic_tinybert",
-)
+openai.api_key = os.getenv("OPEN_AI_KEY")
 
-# Example usage
-context = "I may have itching,vomiting,fatigue,weight_loss,high_fever,yellowish_skin,dark_urine,abdominal_pain"
-question = "what condition do I have?"
-result = qa_pipeline(question=question, context=context)
-print(result)
+
+class QuestionAnswers:
+    def __init__(self):
+        self.model = "ft:gpt-3.5-turbo-0125:personal::AQkdF1Gb"
+
+    def get_answer_for_question(self, question):
+        response = openai.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a medical assistant.",
+                },
+                {"role": "user", "content": question},
+            ],
+        )
+        return response.choices[0].message.content
+
+
+# question = "I may have itching vomiting fatigue weight_loss high_fever yellowish_skin dark_urine."
+# print(QuestionAnswers().get_answer_for_question(question))

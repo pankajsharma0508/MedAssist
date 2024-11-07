@@ -18,6 +18,8 @@ export class PatientComponent {
   apiUrl = 'http://localhost:8000';
   protected files: string | undefined;
 
+  step = 1;
+
   constructor(private http: HttpClient) {
   }
 
@@ -46,6 +48,11 @@ export class PatientComponent {
     const details = `${this.patient.name} report that ${this.patient.symptoms}. We considered him as a ${this.patient.severity}. On further diagnosis, found that, ${this.patient.diagnosis}`;
     const summary = await lastValueFrom(this.http.get<any>(`${this.apiUrl}/summarize?details=${encodeURIComponent(`${details}`)}`));
     this.patient.summary = summary;
+  }
+
+  async diagnose() {
+    const summary = await lastValueFrom(this.http.get<any>(`${this.apiUrl}/predict-disease?symptoms=${encodeURIComponent(`${this.patient.symptoms}`)}`));
+    this.patient.diagnosis = `${this.patient.diagnosis} \n ${summary}`;
   }
 
   async categoriesReports() {

@@ -4,6 +4,7 @@ from tasks.SpeechToTextConverter import SpeechToTextConverter
 from tasks.SummaryGenerator import SummaryGenerator
 from tasks.SeverityPredictor import SeverityPredictor
 from tasks.ImageClassifier import ImageClassifier
+from tasks.QuestionAnswers import QuestionAnswers
 
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn
@@ -15,6 +16,7 @@ speechToTextConverter = SpeechToTextConverter()
 summaryGenerator = SummaryGenerator()
 severityPredictor = SeverityPredictor()
 imageClassifier = ImageClassifier()
+qAndAGenerator = QuestionAnswers()
 
 # Add CORS middleware
 app.add_middleware(
@@ -52,6 +54,12 @@ async def get_summary(details: str):
 async def get_image_category(imageUrl: str):
     print(imageUrl)
     return imageClassifier.categorize(imageUrl)
+
+
+@app.get("/predict-disease")
+async def predict_disease_for_symptoms(symptoms: str):
+    print(symptoms)
+    return qAndAGenerator.get_answer_for_question(symptoms)
 
 
 if __name__ == "__main__":

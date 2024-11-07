@@ -1,73 +1,130 @@
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Patient Information - {{ patient.name}}</h2>
-
+<div class="container">
+    <h2 class="text-center mt-1">Patient Information - {{ patient.name}}</h2>
     <div class="row">
         <div class="col-md-6">
-            <!-- Template-driven form with ngModel -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item" (click)="step = 1">
+                    <a class="nav-link" [class.active]="step === 1" aria-current="page">Details</a>
+                </li>
+                <li class="nav-item" (click)="step = 2">
+                    <a class="nav-link" [class.active]="step === 2">Symptoms</a>
+                </li>
+                <li class="nav-item" (click)="step = 3">
+                    <a class="nav-link" [class.active]="step === 3">Reports</a>
+                </li>
+                <li class="nav-item" (click)="step = 4">
+                    <a class="nav-link" [class.active]="step === 4">Examinations</a>
+                </li>
+                <li class="nav-item" (click)="step = 5">
+                    <a class="nav-link" [class.active]="step === 5">Diagnosis</a>
+                </li>
+            </ul>
             <form #patientForm="ngForm">
+                @switch (step) {
+                @case (1) {
                 <div class="form-group p-1">
                     <label for="patientName">Patient Name</label>
                     <input type="text" class="form-control" id="patientName" placeholder="Enter patient name"
                         name="name" [(ngModel)]="patient.name" required>
                 </div>
+                } @case(2) {
                 <div class="form-group p-1 pb-2">
                     <label for="Symptoms">Describe the symptoms in detail</label>
                     <div class="d-flex">
                         <textarea class="form-control" id="Symptoms" placeholder="Enter symptoms" name="Symptoms"
-                            [(ngModel)]="patient.symptoms" rows="2" required></textarea>
+                            [(ngModel)]="patient.symptoms" rows="6" required></textarea>
                     </div>
                 </div>
-               
+                <div class="p-2">
+                    <button class="btn btn-sm btn-primary" (click)="getSeverity()"> Predict Severity</button>
+                </div>
+                <p> Based on pre-trained model <strong>gpt-3.5-turbo</strong>, we will decide severity of the patient
+                    and
+                    action plan.</p>
+
+                } @case (3) {
                 <div class="form-group p-1 pb-2">
-                    <label for="diagnosis">Diagnosis</label>
+                    <label for="Symptoms">Please provide medical reports. </label>
                     <div class="d-flex">
-                        <textarea class="form-control" id="diagnosis" placeholder="Enter diagnosis" name="diagnosis"
-                            [(ngModel)]="patient.diagnosis" rows="1" required></textarea>
-                        <div class="p-2">
-                            <ngx-mic-recorder (getAsBlob)="saveAsBlob($event)" (afterStopRecording)="afterStop($event)"
-                                [showVisualization]="true" visualizationType="FrequencyCircles"></ngx-mic-recorder>
-                        </div>
+                        <textarea class="form-control" id="Symptoms"
+                            placeholder="Enter report urls separated by semicolon." name="Symptoms" [(ngModel)]="files"
+                            rows="6" required></textarea>
                     </div>
                 </div>
+                <div class="p-2">
+                    <button class="btn btn-sm btn-primary m-1" (click)="categoriesReports()"> Categories
+                        Reports</button>
+                </div>
+                <p> Based on pre-trained model <strong>openai/clip-vit-base-patch32</strong>, we will categories medical
+                    reports provided by the patient. and
+                    action plan.</p>
+
+                } @case (4) {
+
                 <div class="form-group p-1 pb-2">
-                    <label for="Symptoms">Please provide medical reports.  </label>
-                    <div class="d-flex">
-                        <textarea class="form-control" id="Symptoms" placeholder="Enter report urls separated by semicolon." name="Symptoms"
-                            [(ngModel)]="files" rows="2" required></textarea>
+                    <label for="diagnosis">Examinations and Observations</label>
+                    <textarea class="form-control" id="diagnosis" placeholder="Enter Observations" name="diagnosis"
+                        [(ngModel)]="patient.diagnosis" rows="6" required></textarea>
+                    <p> Based on pre-trained model <strong>openai/whisper-1</strong>, we will create medical transcript.
+                    </p>
+                    <div class="p-2">
+                        <ngx-mic-recorder (getAsBlob)="saveAsBlob($event)" (afterStopRecording)="afterStop($event)"
+                            [showVisualization]="true" visualizationType="FrequencyCircles"></ngx-mic-recorder>
                     </div>
                 </div>
+                }
+                @case (5) {
+                <div class="form-group p-1 pb-2">
+                    <label for="diagnosis">Diagnosis </label>
+                    <textarea class="form-control" id="diagnosis" placeholder="Enter diagnosis" name="diagnosis"
+                        [(ngModel)]="patient.diagnosis" rows="6" required></textarea>
+                </div>
+                <div class="p-2">
+                    <button class="btn btn-sm btn-primary m-1" (click)="diagnose()">
+                        Diagnose</button>
+                    <button class="btn btn-sm btn-primary m-1" (click)="summarize()">
+                        Generate Summary</button>
+                </div>
+                <p>
+                    Based on pre-trained model <strong>facebook/bart-large-cnn</strong>, we will generate patient
+                    summary.</p>
+                <p>
+                    Based on fine-tuned model <strong>openai/ft:gpt-3.5-turbo-0125</strong>, we diagnose the probable
+                    disease.
+                    We used <strong>fhai50032/Symptoms_to_disease_7k</strong> dataset from Hugging Face to train the
+                    model.
+                </p>
+                }
+                }
             </form>
         </div>
         <div class="col-md-6">
-            <button class="btn btn-sm btn-primary" (click)="getSeverity()"> Predict Severity</button>
-            <button class="btn btn-sm btn-primary m-1" (click)="summarize()"> Summaries</button>
-            <button class="btn btn-sm btn-primary m-1" (click)="categoriesReports()"> Categories Reports</button>
             <!-- Display the form data (for demonstration purposes) -->
-            <div class="mt-4 p-2 border border-primary" >
-                <h5>Patient Health Summary:</h5>
-                <p><strong>Patient Name:</strong> {{ patient.name }}</p>
-                <p><strong>Diagnosis:</strong> <br>{{ patient.diagnosis }}</p>
-                <p><strong>Severity:</strong> {{ patient.severity }}</p>
-                <p><strong>Summary:</strong> {{ patient.summary }}</p>
+            <div class="mt-4 p-2 border border-primary">
+                <p><strong>Patient Name:</strong>{{ patient.name }}</p>
+                <p><strong>Symptoms:</strong> <br>{{ patient.symptoms }}</p>
+                <p><strong>Severity:</strong> <br>{{ patient.severity }}</p>
                 <div class="container mt-4">
                     <h5>Reports</h5>
                     <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th scope="col">Report name</th>
-                          <th scope="col">Report Category</th>
-                          <th scope="col">Probability</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr *ngFor="let item of patient.reports; let i = index">
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.category }}</td>
-                          <td><a [href]="item.url" target="_blank">Report Link</a></td>
-                        </tr>
-                      </tbody>
+                        <thead>
+                            <tr>
+                                <th scope="col">Report name</th>
+                                <th scope="col">Report Category</th>
+                                <th scope="col">Probability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of patient.reports; let i = index">
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.category }}</td>
+                                <td><a [href]="item.url" target="_blank">Report Link</a></td>
+                            </tr>
+                        </tbody>
                     </table>
-                  </div>
+                </div>
+                <p><strong>Diagnosis:</strong> <br>{{ patient.diagnosis }}</p>
+                <p><strong>Summary:</strong> <br>{{ patient.summary }}</p>
             </div>
         </div>
     </div>
