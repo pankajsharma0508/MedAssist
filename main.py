@@ -62,5 +62,11 @@ async def predict_disease_for_symptoms(symptoms: str):
     return qAndAGenerator.get_answer_for_question(symptoms)
 
 
+@app.get("/evaluate-models")
+def evaluateModels():
+    severity_metrics = severityPredictor.evaluate_metrics()
+    return severity_metrics
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
