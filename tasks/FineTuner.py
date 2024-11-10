@@ -41,6 +41,6 @@ class FineTuner:
                 time.sleep(60)  # Check every 60 seconds
 
 
-fineTuner = FineTuner()
-fineTuner.upload_file()
-fineTuner.fine_tune()
+# fineTuner = FineTuner()
+# fineTuner.upload_file()
+# fineTuner.fine_tune()
